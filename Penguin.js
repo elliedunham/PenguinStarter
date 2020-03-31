@@ -10,10 +10,11 @@ penguinPromise.then(function(penguins)
     
                     })
 
-var makecol = function(rows, accessor)
+var makecol = function(rows, msg, accessor)
 {
 rows.append("td")
     .text(accessor)
+    .attr("id", msg)
 }
 
 var useimage = function(rows, accessor)
@@ -22,6 +23,7 @@ var useimage = function(rows, accessor)
     rows.append("td")
     .append("img")
     .attr("src", accessor)
+    
 }
 
 var getGrade = function(penguin)
@@ -39,31 +41,41 @@ var createTable = function(penguins)
                     .enter()
                     .append("tr")
   
+    var msg = "  ";
     
     useimage(rows, function(penguin)
             {return "imgs/" + penguin.picture;
+            
             })
     
-    makecol(rows, function(penguin)
+    makecol(rows, "quizGrade", function(penguin)
             {
         return d3.mean(penguin.quizes.map(getGrade));
     })
     
-    makecol (rows, function(penguin)
+    makecol (rows, "homeworkGrade",function(penguin)
              {
              return d3.mean(penguin.homework.map(getGrade));
              })
     
-    makecol(rows, function(penguin)
+    makecol(rows, "testGrade", function(penguin)
             {
         
         return d3.mean(penguin.test.map(getGrade));
             })
     
-    makecol(rows, function(penguin)
+    makecol(rows, "finalGrade", function(penguin)
             {
         return penguin.final.map(getGrade);
         
     })
     
 }
+
+d3.select("#finalGrade")
+    .on("click", function()
+       {
+    d3.select
+
+
+})
