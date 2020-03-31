@@ -1,0 +1,22 @@
+img
+{
+    width: 100px;
+    height: 100px;
+}
+body
+{
+    background-color: azure;
+}
+td
+{
+    border-style: solid;
+    font-family: sans-serif;
+    text-align: center;
+   width: 150px;
+    height: 150px;
+}
+#heading 
+{
+    font-style: italic;
+    
+}
