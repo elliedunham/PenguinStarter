@@ -5,6 +5,8 @@ penguinPromise.then(function(penguins)
     createHeading();
     createTable(penguins);
    sortPenguins(penguins);
+    console.log( getOnePeng(penguins, 1));
+    
                     },
                    function(error)
                     {
@@ -20,7 +22,7 @@ rows.append("td")
 }
 var makeHeading = function()
 {
-    d3.select("#Ptable")
+    d3.select("thead")
         .append("tr")
         .attr("id", "Heading")
         
@@ -43,9 +45,9 @@ var useimage = function(rows, msg, accessor)
     .attr("id", msg)
 }
 
-var getGrade = function(penguin)
+var getGrade = function(preference)
 {
-    return penguin.grade;
+    return preference.grade;
 }
 
 var createHeading = function()
@@ -55,15 +57,28 @@ var createHeading = function()
      addHeading ( "Average Homework Grade", "homeworkGrade");
      addHeading ( "Average Test Grade", "testGrade");
      addHeading ( "Final Grade", "finalGrade");
+    addHeading ("Grade in Class", "grade")
 }
 var createTable = function(penguins)
 {
         
-    var rows = d3.select("#Ptable")
+    var rows = d3.select("tbody")
                     .selectAll("tr")
                     .data(penguins)
                     .enter()
                     .append("tr")
+                    .attr("class", function(penguin)
+            {
+        if (calcGrade(penguin)< 70)
+            {
+                return "failing";
+            }
+        else
+            {
+                return "passing";
+        }})
+                   
+                    
   
     var msg = "  ";
    
@@ -74,29 +89,42 @@ var createTable = function(penguins)
     
     makecol(rows, "quizGrade", function(penguin)
             {
-        var avgQuizGrade = d3.mean(penguin.quizes.map(getGrade));
-        return avgQuizGrade;
+        return  d3.mean(penguin.quizes.map(getGrade));
     })
     
     makecol (rows, "homeworkGrade",function(penguin)
-             { var avgHWGrade = d3.mean(penguin.homework.map(getGrade));
-             return avgHWGrade;
+             { return d3.mean(penguin.homework.map(getGrade));
+             
              })
     
     makecol(rows, "testGrade", function(penguin)
             {
-        var avgTestGrade = d3.mean(penguin.test.map(getGrade));
-        return avgTestGrade;
+       return d3.mean(penguin.test.map(getGrade));
+        
             })
     
     makecol(rows, "finalGrade", function(penguin)
             {
-        var avgFinalGrade =  penguin.final.map(getGrade);
-        return avgFinalGrade;
+        return penguin.final.map(getGrade);
+    })
         
+    makecol(rows, "grade", function(penguin)
+    {   
+    var avgTestGrade = d3.mean(penguin.test.map(getGrade));
+    
+    var avgQuizGrade = d3.mean(penguin.quizes.map(getGrade));
+    
+    var avgHWGrade = d3.mean(penguin.homework.map(getGrade));
+    var grade = .35 *(penguin.final.map(getGrade))/100 + .3*(avgTestGrade)/100 +.2*(avgQuizGrade)/10 +.15*(avgHWGrade)/50;
+        
+    return grade*100;
+   
     })
     
 }
+
+    
+
 var meanHWSort = function(penguin)
    { penguin.sort(function(A,B)
                   {
@@ -104,7 +132,7 @@ var meanHWSort = function(penguin)
            {
         return 0;
             }
-       if (d3.mean(A.homework.map(getGrade))>d3.mean(B.homework.map(getGrade)))
+       if (d3.mean(A.homework.map(getGrade))< d3.mean(B.homework.map(getGrade)))
            {
                return 1;
            }
@@ -165,6 +193,36 @@ var meanFinalSort = function(penguin)
            }
    }
         )}
+
+meanGradeSort= function(penguin)
+{ penguin.sort(function(A,B)
+                  {
+    if (calcGrade(A) == calcGrade(B))
+        {
+            return 0;
+        }
+          if (calcGrade(A)< calcGrade(B)) {
+               return 1;
+           }
+       else
+           {
+               return -1;
+           }
+   }
+        )}
+var calcGrade= function(penguin)
+    {   
+    var avgTestGrade = d3.mean(penguin.test.map(getGrade));
+    
+    var avgQuizGrade = d3.mean(penguin.quizes.map(getGrade));
+    
+    var avgHWGrade = d3.mean(penguin.homework.map(getGrade));
+    var grade = .35 *(penguin.final.map(getGrade))/100 + .3*(avgTestGrade)/100 +.2*(avgQuizGrade)/10 +.15*(avgHWGrade)/50;
+        
+    return grade*100;
+    
+    }
+
 var clearTable = function()
 {
     d3.selectAll("tr")
@@ -174,7 +232,7 @@ var clearTable = function()
 var sortPenguins = function(penguin)
 {      
       
-d3.selectAll("#homeworkGrade")
+d3.select("#homeworkGrade")
     .on("click", function()
        {
     
@@ -182,9 +240,11 @@ d3.selectAll("#homeworkGrade")
     clearTable();
     createHeading();
     createTable(penguin);
-})
+    sortPenguins(penguin);
+ 
+});
     
-d3.selectAll("#quizGrade")
+d3.select("#quizGrade")
     .on("click", function()
        {
     
@@ -192,25 +252,71 @@ d3.selectAll("#quizGrade")
     clearTable();
     createHeading();
     createTable(penguin);
-})
+    sortPenguins(penguin);
+   
+});
     
-d3.selectAll("#testGrade") 
+d3.select("#testGrade") 
     .on("click", function()
      {  meanTestSort(penguin);
        clearTable();
       createHeading();
         createTable(penguin);
+      sortPenguins(penguin);
+     
      }
-    )
-d3.selectAll("#finalGrade")
+    );
+d3.select("#finalGrade")
     .on("click", function()
        {
-    meanFinalSort(penguin)
+    meanFinalSort(penguin);
     clearTable();
     createHeading();
     createTable(penguin);
     
+    sortPenguins(penguin);
+
+});
+d3.select("#grade")
+    .on("click", function()
+       {
+    meanGradeSort(penguin);
+    clearTable();
+    createHeading();
+    createTable(penguin);
+    sortPenguins(penguin);
+  
+    
 })
 
-
 }
+
+
+
+var createProfile = function(penguin)
+{
+   clearTable();
+    makeHeading();
+    addHeading ("Picture", "picture");
+     addHeading ("Quiz Grades", "quizGrade");
+     addHeading ( "Homework Grades", "homeworkGrade");
+     addHeading ( "Test Grades", "testGrade");
+     addHeading ( "Final Grade", "finalGrade");
+   
+    var rows = d3.select("tbody")
+                    .selectAll("tr")
+                    .data(penguin)
+                    .enter()
+                    .append("tr")
+                   
+    makecol(rows, "homework", penguin.map(getHWGrade))
+   
+ 
+}
+
+var getOnePeng = function(penguin, num)
+    {
+        return penguin[num];
+    }
+
+

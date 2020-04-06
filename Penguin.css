@@ -18,5 +18,11 @@ td
 #heading 
 {
     font-style: italic;
+
     
+}
+
+.failing
+{
+    background-color: red;
 }
