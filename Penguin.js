@@ -383,7 +383,9 @@ paragraphs.append("p")
     return "imgs/" + penguin[num].picture
 })
       
- 
+ paragraphs.append("p")
+            .text("Click Image to Return to Table")
+            .attr("id", "return")
  
     //HomeWork Grades                  
 paragraphs.append("p")
