@@ -5,7 +5,8 @@ penguinPromise.then(function(penguins)
     createHeading();
     createTable(penguins);
    sortPenguins(penguins);
-    console.log( getOnePeng(penguins, 1));
+    bioTable(penguins);
+   
     
                     },
                    function(error)
@@ -194,7 +195,7 @@ var meanFinalSort = function(penguin)
    }
         )}
 
-meanGradeSort= function(penguin)
+var meanGradeSort= function(penguin)
 { penguin.sort(function(A,B)
                   {
     if (calcGrade(A) == calcGrade(B))
@@ -240,6 +241,7 @@ d3.select("#homeworkGrade")
     clearTable();
     createHeading();
     createTable(penguin);
+    bioTable(penguin);
     sortPenguins(penguin);
  
 });
@@ -252,6 +254,7 @@ d3.select("#quizGrade")
     clearTable();
     createHeading();
     createTable(penguin);
+    bioTable(penguin);
     sortPenguins(penguin);
    
 });
@@ -262,6 +265,7 @@ d3.select("#testGrade")
        clearTable();
       createHeading();
         createTable(penguin);
+      bioTable(penguin);
       sortPenguins(penguin);
      
      }
@@ -273,7 +277,7 @@ d3.select("#finalGrade")
     clearTable();
     createHeading();
     createTable(penguin);
-    
+    bioTable(penguin);
     sortPenguins(penguin);
 
 });
@@ -284,6 +288,7 @@ d3.select("#grade")
     clearTable();
     createHeading();
     createTable(penguin);
+    bioTable(penguin);
     sortPenguins(penguin);
   
     
@@ -291,32 +296,134 @@ d3.select("#grade")
 
 }
 
-
-
-var createProfile = function(penguin)
+var bioTable = function(penguin)
 {
-   clearTable();
-    makeHeading();
-    addHeading ("Picture", "picture");
-     addHeading ("Quiz Grades", "quizGrade");
-     addHeading ( "Homework Grades", "homeworkGrade");
-     addHeading ( "Test Grades", "testGrade");
-     addHeading ( "Final Grade", "finalGrade");
-   
-    var rows = d3.select("tbody")
-                    .selectAll("tr")
-                    .data(penguin)
-                    .enter()
-                    .append("tr")
-                   
-    makecol(rows, "homework", penguin.map(getHWGrade))
-   
+    d3.select("tbody")  
+        .selectAll("tr")
+        .on("click", function()
+           {
+        var place = (this).rowIndex -1;
+        createProfile(penguin,place);
+        
+     d3.select("#singlePic")
+            .on("click", function()
+           {
+         console.log("working");
+        d3.selectAll("div")
+            .remove();
+        
+        d3.select("body")
+            .append("table") 
+            .attr("id", "Ptable")
+        
+        d3.select("#PTable")
+            .append("thead")
+        
+        d3.select("#Ptable")
+            .append("tbody")
+
+     createHeading();
+    createTable(penguin);
+         bioTable(penguin);
+    sortPenguins(penguin);    
+}
+                )
+    })
+    
+ 
+    
+    
+ 
+    }  
+    
+                 
+
+var BackToTable = function(penguin)
+{ console.log("hello");
+     d3.selectAll("#singlePic")
+            .on("click", function(penguin)
+           {
+         console.log("working");
+        d3.selectAll("p")
+            .remove();
+        
+        d3.select("body")
+            .append("table") 
+            .attr("id", "Ptable")
+        
+        d3.select("#PTable")
+            .append("thead")
+        
+        d3.select("#Ptable")
+            .append("tbody")
+
+     createHeading();
+    createTable(penguin);
+    sortPenguins(penguin);    
+}
+                )}
+
+
+
+
+var createProfile = function(penguin, num)
+{ 
+ 
+d3.selectAll("#Ptable")
+    .remove();
+
+ 
+    var paragraphs = d3.select("body")
+                    .append("div")
+ 
+paragraphs.append("p")
+          .attr("id", "singlePic")
+        .append("img")
+        .attr("src", function(){
+    return "imgs/" + penguin[num].picture
+})
+      
+ 
+ 
+    //HomeWork Grades                  
+paragraphs.append("p")
+            .text(function(){return "Home Work Grades: " + penguin[num].homework.map(getGrade)})
+            .attr("id", "singleHW")
+ 
+ 
+ 
+    //Test Grades
+paragraphs.append("p")
+            .text(function()
+        {return "Test Grades: " + penguin[num].test.map(getGrade)})
+            .attr("id", "singleTest")
+ 
+ //Quiz Grades
+ paragraphs.append("p")
+            .text(function()
+                 {
+     return "Quiz Grades: " + penguin[num].quizes.map(getGrade)
+ })
+            .attr("id", "singleQuiz")
+    
+ //final grade
+ paragraphs.append("p")
+            .text(function()
+                 {
+     return "Final Grade: " + penguin[num].final.map(getGrade)
+ })
+            .attr("id","singleFinal")
+ 
+ //grade in class
+ paragraphs.append("p")
+            .text(function()
+                 {
+return "Grade in Class: " + calcGrade(penguin[num])
+ 
+ })
+        
  
 }
 
-var getOnePeng = function(penguin, num)
-    {
-        return penguin[num];
-    }
 
 
